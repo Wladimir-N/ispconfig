@@ -1,0 +1,61 @@
+php-------------------------------------------------------------------------------------------------------------------------------------------------------------
+short_open_tag=On
+opcache.max_accelerated_files=100000
+opcache.revalidate_freq=0
+opcache.memory_consumption=128
+opcache.fast_shutdown=1
+opcache.force_restart_timeout=60
+opcache.file_update_protection=10
+max_input_vars=10000
+pcre.jit=0
+upload_max_filesize=5M
+post_max_size=5M
+memory_limit=129M
+date.timezone=Europe/Moscow
+session.gc_probability=1
+;allow_url_fopen = Off
+php-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+nginx-------------------------------------------------------------------------------------------------------------------------------------------------------------
+client_max_body_size 5m;
+add_header X-Frame-Options SAMEORIGIN;
+add_header X-Content-Type-Options nosniff;
+add_header Strict-Transport-Security "max-age=31536000; preload;";
+if ($request_uri ~ ^([^\?]*)/index\.(html|php)) { return 308 $1/$is_args$args; }
+location / {
+ try_files $uri $uri/ /bitrix/urlrewrite.php$is_args$args;
+ location ~ /\.default/.+ {
+  access_log off;
+  log_not_found off;
+  location ~ \.php$ {
+   try_files /f5debce384416c95c84c8122354ed680.htm @php;
+  }
+  location ~* ^.+\.(jpe?g|png|tiff|gif|webp|xml|html|yml|ogg|ogv|svg|svgz|eot|otf|woff|woff2|mp4|ttf|rss|atom|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|rtf|pdf|txt|js|css|bmp|pnm|pbm|ppm)$ {
+   access_log off;
+   expires 97d;
+  }
+ }
+ location ~* ^.+\.(jpe?g|png|tiff|gif|webp|xml|yml|ogg|ogv|svg|svgz|eot|otf|woff|woff2|mp4|ttf|rss|atom|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|rtf|pdf|txt|js|css|bmp|pnm|pbm|ppm)$ {
+  access_log off;
+  expires 97d;
+ }
+ location ~* @.*\.html$ { internal; }
+}
+location ^~ /bitrix/modules { internal; }
+location ^~ /upload/ {
+ location ~ /\. { internal; }
+ location ~* [^/]\.(jpe?g|png|tiff|gif|webp|xml|yml|ogg|ogv|svgz?|eot|otf|woff2?|mp4|ttf|rss|atom|ico|zip|t?gz|rar|bz2|doc|xls|exe|ppt|tar|midi?|wav|rtf|pdf|txt|js|css|bmp|pnm|pbm|ppm)$ {
+  access_log off;
+  expires 97d;
+ }
+ location ~ [^/]\.php$ { internal; }
+}
+location @php {
+ try_files $uri /bitrix/urlrewrite.php$is_args$args;
+ include /etc/nginx/fastcgi_params;
+ {FASTCGIPASS}
+ fastcgi_index index.php;
+ fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+ fastcgi_intercept_errors on;
+}
+nginx-------------------------------------------------------------------------------------------------------------------------------------------------------------
