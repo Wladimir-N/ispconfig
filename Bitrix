@@ -24,6 +24,10 @@ add_header Strict-Transport-Security "max-age=31536000; preload;";
 if ($request_uri ~ ^([^\?]*)/index\.(html|php)) { return 308 $1/$is_args$args; }
 location / {
  try_files $uri $uri/ /bitrix/urlrewrite.php$is_args$args;
+ location ~ ^/bitrix/tools/(vote/uf|html_editor_action)\.php$ {
+  if ($request_method = POST) { return 404; }
+  try_files return @php;
+ }
  location ~ /\.default/.+ {
   access_log off;
   log_not_found off;
