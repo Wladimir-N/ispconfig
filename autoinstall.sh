@@ -16,6 +16,7 @@ if [ $exitstatus = 0 ]; then
 	if [ $OPTION = 1 ]; then
 		PHP=$(whiptail --title "Меню программы установки" --menu \
      "Выберите версию php" 23 77 16 \
+     "8.2" " " \
      "8.1" " " \
      "8.0" " " \
      "7.4" " " \
@@ -54,6 +55,7 @@ if [ $exitstatus = 0 ]; then
 	elif [ $OPTION = 2 ]; then
 		PHP=$(whiptail --title "Меню программы установки" --menu \
      "Выберите версию php" 23 77 16 \
+     "8.2" " " \
      "8.1" " " \
      "8.0" " " \
      "7.4" " " \
