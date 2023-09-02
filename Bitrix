@@ -46,6 +46,10 @@ location / {
  location ~* @.*\.html$ { internal; }
 }
 location ^~ /bitrix/modules { internal; }
+location ^~ /bitrix/php_interface { internal; }
+location ^~ /local/core { internal; }
+location ^~ /local/modules { internal; }
+location ^~ /local/vendor { internal; }
 location ^~ /upload/ {
  location ~ /\. { internal; }
  location ~* [^/]\.(jpe?g|png|tiff|gif|webp|xml|yml|ogg|ogv|svgz?|eot|otf|woff2?|mp4|ttf|rss|atom|ico|zip|t?gz|rar|bz2|doc|xls|exe|ppt|tar|midi?|wav|rtf|pdf|txt|js|css|bmp|pnm|pbm|ppm)$ {
