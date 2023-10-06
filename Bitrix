@@ -47,6 +47,7 @@ location / {
 }
 location ^~ /bitrix/modules { internal; }
 location ^~ /bitrix/php_interface { internal; }
+location ^~ /company/personal/user/ { try_files $uri /bitrix/urlrewrite.php$is_args$args; }
 location ^~ /docs/shared/file/ { try_files $uri /bitrix/urlrewrite.php$is_args$args; }
 location ^~ /local { internal; }
 location ^~ /upload/ {
