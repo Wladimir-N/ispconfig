@@ -43,7 +43,7 @@ echo -e '\#!/bin/bash\n/usr/sbin/nginx -t && /usr/sbin/nginx -s reload' > /usr/l
 chmod +x /usr/local/bin/reload.sh
 echo '37 16 */29 * * /usr/local/bin/reload.sh' | crontab
 export passwd_root=$(pwgen 16 1)
-mysql -e "SET PASSWORD FOR root@localhost = PASSWORD(\'${passwd_root}\');FLUSH PRIVILEGES;"
+mysql -e "SET PASSWORD FOR root@localhost = PASSWORD('${passwd_root}');FLUSH PRIVILEGES;"
 sed -i "s/^user.*$/&\npassword = \"$passwd_root\"/"  /etc/mysql/debian.cnf
 cd /tmp
 wget http://www.ispconfig.org/downloads/ISPConfig-3-stable.tar.gz
