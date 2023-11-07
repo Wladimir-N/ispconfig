@@ -49,6 +49,16 @@ location ^~ /bitrix/modules { internal; }
 location ^~ /bitrix/php_interface { internal; }
 location ^~ /company/personal/user/ { try_files $uri /bitrix/urlrewrite.php$is_args$args; }
 location ^~ /docs/shared/file/ { try_files $uri /bitrix/urlrewrite.php$is_args$args; }
+location ^~ /local/templates/ {
+ location ~ /\. { internal; }
+ location ~* [^/]\.(jpe?g|png|tiff|gif|webp|xml|yml|ogg|ogv|svgz?|eot|otf|woff2?|mp4|ttf|rss|atom|ico|zip|t?gz|rar|bz2|doc|xls|exe|ppt|tar|midi?|wav|rtf|pdf|txt|js|css|bmp|pnm|pbm|ppm)$ {
+  access_log off;
+  expires 97d;
+ }
+ location ~ \.php$ {
+  try_files /f5debce384416c95c84c8122354ed680.htm @php;
+ }
+}
 location ^~ /local { internal; }
 location ^~ /upload/ {
  location ~ /\. { internal; }
