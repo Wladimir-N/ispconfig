@@ -76,4 +76,7 @@ location @php {
  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
  fastcgi_intercept_errors on;
 }
+# Дополнительные правила для /docs/ и /company/
+location ^~ /docs/shared/file/ { try_files $uri /bitrix/urlrewrite.php$is_args$args; }
+location ^~ /company/personal/user/ { try_files $uri /bitrix/urlrewrite.php$is_args$args; }
 nginx-------------------------------------------------------------------------------------------------------------------------------------------------------------
