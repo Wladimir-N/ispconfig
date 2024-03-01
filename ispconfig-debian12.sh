@@ -55,3 +55,5 @@ echo -e "[install]\nlanguage=en\ninstall_mode=standard\nhostname=$(hostname -f)\
 php install.php --autoinstall=autoinstall.ini
 echo -e "admin $passwd_isp\n$passwd_root" > ~/.ispconfig.ini
 echo -e 'User-Agent: *\nDisallow: /' > /var/www/robots.txt
+mkdir /etc/systemd/system/openvpn-client@.service.d
+echo -e '[Service]\nRestart=always\nRestartSec=10000ms\nStartLimitInterval=0' > /etc/systemd/system/openvpn-client@.service.d/autorestart.conf
