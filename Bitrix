@@ -49,6 +49,8 @@ location / {
 }
 location ^~ /bitrix/modules { internal; }
 location ^~ /bitrix/php_interface { internal; }
+location ^~ /bitrix/updates { internal; }
+location ^~ /bitrix/tmp { internal; }
 location ^~ /local/templates/ {
  location ~ /\.default/.+ {
   access_log off;
