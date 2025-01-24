@@ -1,8 +1,11 @@
 Файл для логирования трассировок медленных запросов
 Link doc: https://www.php.net/manual/ru/install.fpm.configuration.php
 
+--Скопировать файл в кастомную директорию
+# cp /usr/local/ispconfig/server/conf/php_fpm_pool.conf.master /usr/local/ispconfig/server/conf-custom/
+
 --Открыть файл
-# nano /usr/local/ispconfig/server/conf/php_fpm_pool.conf.master 
+# nano /usr/local/ispconfig/server/conf-custom/php_fpm_pool.conf.master 
 
 --Добавить текст в конце
 ...
