@@ -23,6 +23,24 @@ CACHE_DIRS=(
     "web/bitrix/managed_cache/"
 )
 
+# Имя файла блокировки
+LOCKFILE="/tmp/cache_cleanup_${USER}.lock"
+
+# Функция для очистки блокировки при завершении
+cleanup_lock() {
+    rm -f "$LOCKFILE"
+    exit
+}
+
+# Установка блокировки и проверка на существование
+if ! { set -C; 2>/dev/null >"$LOCKFILE"; }; then
+    echo "Скрипт уже запущен под именем пользователя $USER."
+    exit 1
+fi
+
+# Установка ловушки для удаления блокировки при выходе
+trap 'cleanup_lock' EXIT
+
 # Функция для получения текущего свободного места на диске
 get_free_space() {
     df / | awk 'NR==2 {print $4 * 1024}'  # Свободное место в байтах
