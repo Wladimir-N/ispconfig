@@ -13,6 +13,7 @@ post_max_size=5M
 memory_limit=256M
 date.timezone=Europe/Moscow
 session.gc_probability=1
+session.cookie_secure=On;
 ;allow_url_fopen = Off
 php-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
