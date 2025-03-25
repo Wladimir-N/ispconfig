@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# Проверка аргументов
+if [[ $# -ne 1 ]]; then
+    echo "Usage: $0 <free_space_threshold_in_gb>"
+    exit 1
+fi
+
+# Получение значения порога из аргумента и проверка на целое число
+if ! [[ "$1" =~ ^[0-9]+$ ]]; then
+    echo "Error: Threshold must be a positive integer."
+    exit 1
+fi
+
+# Установка минимального порога свободного места в байтах
+THRESHOLD=$(($1 * 1024 * 1024 * 1024))
+
+# Директории, в которых нужно искать кэш-файлы
+CACHE_DIRS=(
+    "web/bitrix/cache/"
+    "web/bitrix/html_pages/*/"
+    "web/bitrix/stack_cache/"
+    "web/bitrix/managed_cache/"
+)
+
+# Имя файла блокировки
+LOCKFILE="/tmp/cache_cleanup_${USER}.lock"
+
+# Функция для очистки блокировки при завершении
+cleanup_lock() {
+    rm -f "$LOCKFILE"
+    exit
+}
+
+# Установка блокировки и проверка на существование
+if ! { set -C; 2>/dev/null >"$LOCKFILE"; }; then
+    echo "Скрипт уже запущен под именем пользователя $USER."
+    exit 1
+fi
+
+# Установка ловушки для удаления блокировки при выходе
+trap 'cleanup_lock' EXIT
+
+# Функция для получения текущего свободного места на диске
+get_free_space() {
+    df / | awk 'NR==2 {print $4 * 1024}'  # Свободное место в байтах
+}
+
+# Функция для удаления старых файлов и обновления .size
+clear_cache() {
+    local free_space=$(get_free_space)
+
+    # Создание временного файла для хранения списка файлов
+    temp_file=$(mktemp)
+
+    # Сбор всех файлов из указанных директорий
+    for dir in "${CACHE_DIRS[@]}"; do
+        find ${dir} -type f -printf '%T@ %p\n' >> "$temp_file"
+    done
+
+    # Сортировка файлов по времени последнего изменения и удаление самых старых
+    sort -n "$temp_file" | awk '{print $2}' | while read -r file; do
+        # Получение размера файла в килобайтах
+        file_size_kb=$(du -k "$file" | cut -f1)
+
+        # Удалить файл, игнорируя ошибки
+        rm "$file" 2>/dev/null || true
+        echo "Deleted: $file"
+
+        # Если файл из web/bitrix/html_pages/, вычитаем его размер из .size
+        if [[ "$file" == web/bitrix/html_pages/* ]]; then
+            size_file="web/bitrix/html_pages/.size"
+            if [[ -f "$size_file" ]]; then
+                current_size=$(cat "$size_file")
+                new_size=$((current_size - file_size_kb))
+                echo $new_size > "$size_file"
+                echo "Updated .size: $new_size KB"
+            fi
+        fi
+
+        # Обновить свободное место
+        free_space=$(get_free_space)
+
+        # Проверить, достигнут ли порог
+        if (( free_space >= THRESHOLD )); then
+            echo "Достигнуто достаточно свободного места: $((free_space / 1024 / 1024)) MB"
+            break
+        fi
+    done
+
+    # Удалить временный файл
+    rm -f "$temp_file"
+
+    # Удаление пустых директорий
+    for dir in "${CACHE_DIRS[@]}"; do
+        find ${dir} -type d -empty -delete
+        echo "Удалены пустые директории в: $dir"
+    done
+}
+
+# Проверка текущего свободного места и запуск очистки при необходимости
+current_free_space=$(get_free_space)
+if (( current_free_space < THRESHOLD )); then
+    echo "Свободного места недостаточно: $((current_free_space / 1024 / 1024)) MB. Начинаем очистку..."
+    clear_cache
+else
+    echo "Достаточно свободного места: $((current_free_space / 1024 / 1024)) MB"
+fi
