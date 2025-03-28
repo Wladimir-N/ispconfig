@@ -4,9 +4,9 @@
 > либо `sudo -i`
 
 1. В ISPConfig создаем сайт. На вкладке Options:
-   * параметру "PHP open_basedir" задаем значение `none`
-   * в параметр "Custom php.ini settings" копируем значение из секции php файла [Bitrix](/Bitrix)
-   * в параметр "nginx Directives" копируем значение из секции nginx файла [Bitrix](/Bitrix)
+    * параметру "PHP open_basedir" задаем значение `none`
+    * в параметр "Custom php.ini settings" копируем значение из секции php файла [Bitrix](/Bitrix)
+    * в параметр "nginx Directives" копируем значение из секции nginx файла [Bitrix](/Bitrix)
 2. В ISPConfig создаем пользователя БД
 3. В ISPConfig создаем базу данных
 4. В ISPConfig создаем пользователя SSH для этого сайта.
@@ -25,5 +25,7 @@
     ```bash
     wget https://www.1c-bitrix.ru/download/files/scripts/restore.php  
     ```
-7. Устанавливаем сайт
+7. Для корректной работы скриптв на кроне, включая запуск агентов, необходимо разрешить короткие теги для консольной
+   версии. Для этого включить опцию short_open_tag глобально в конфигах /etc/php/{ваша версия}/cli/php.ini
+8. Устанавливаем сайт
 
