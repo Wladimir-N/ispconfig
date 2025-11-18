@@ -40,6 +40,7 @@ chmod 600 /etc/ssl/private/pure-ftpd.pem
 systemctl restart pure-ftpd-mysql
 echo -e '[pure-ftpd]\nenabled = true\nport = ftp\nfilter = pure-ftpd\nlogpath = /var/log/syslog\nmaxretry = 3\n\n[dovecot]\nenabled = true\nfilter = dovecot\nlogpath = /var/log/mail.log\nmaxretry = 5\n\n[postfix-sasl]\nenabled = true\nport = smtp\nfilter = postfix[mode=auth]\nlogpath = /var/log/mail.log\nmaxretry = 3' > /etc/fail2ban/jail.local
 systemctl restart fail2ban
+echo 'server_names_hash_bucket_size 33;' > /etc/nginx/conf.d/ispconfig.conf
 echo -e '\#!/bin/bash\n/usr/sbin/nginx -t && /usr/sbin/nginx -s reload' > /usr/local/bin/reload.sh
 chmod +x /usr/local/bin/reload.sh
 echo '37 16 */29 * * /usr/local/bin/reload.sh' | crontab
